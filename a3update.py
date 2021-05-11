@@ -124,7 +124,7 @@ def mod_needs_update(mod_id, path):
 
 def update_mods():
     steam_cmd_params  = " +login {} {}".format(STEAM_USER, STEAM_PASS)
-    steam_cmd_params += " +force_install_dir {}".format(A3_SERVER_DIR)
+    steam_cmd_params += " +force_install_dir {}".format(STEAM_DIR)
     i = 0;
     for mod_name, mod_id in MODS.items():
         path = "{}/{}".format(A3_WORKSHOP_DIR, mod_id)
