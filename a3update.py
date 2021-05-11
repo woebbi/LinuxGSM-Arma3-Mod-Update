@@ -25,6 +25,7 @@ STEAM_PASS = getpass.getpass(prompt="Steam Password ")
 
 A3_WORKSHOP_DIR = "{}/steamapps/workshop/content/{}".format(STEAM_DIR, A3_WORKSHOP_ID)
 A3_MODS_DIR = "{}/mods".format(A3_SERVER_DIR)
+#endregion
 
 print("")
 print("Select Modlist Files Found")
@@ -94,7 +95,7 @@ def start_server():
     config_mods = "mods=\"{}\"".format(config_mods)
 
     replaced = False
-    f = open("{}/lgsm/config-lgsm/arma3server/arma3server.cfg".format(A3_SERVER_DIR), "w+")
+    f = open("{}/lgsm/config-lgsm/arma3server/arma3server.cfg".format(A3_SERVER_USERDIR), "w+")
     for line in f:
         if re.search('mods\=\".*\"', line):
             newline = line.replace('.*', config_mods)
