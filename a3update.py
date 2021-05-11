@@ -12,22 +12,24 @@ from datetime import datetime
 from urllib import request
 
 #region Configuration
-A3_SERVER_FOLDER = "srv2"
+A3_SERVER_FOLDER = "serverfiles"
 A3_SERVER_ID = "233780"
-A3_SERVER_DIR = "/home/gsm/games/gsm/arma/{}".format(A3_SERVER_FOLDER)
+A3_SERVER_USERDIR = "/home/arma3lgsminstance"
+A3_SERVER_DIR = "{}/{}".format(A3_SERVER_USERDIR, A3_SERVER_FOLDER)
 A3_WORKSHOP_ID = "107410"
 
-STEAM_CMD = "{}/steamcmd/steamcmd.sh".format(A3_SERVER_DIR)
+STEAM_DIR = "{}/.local/share/Steam".format(A3_SERVER_USERDIR)
+STEAM_CMD = "{}/steamcmd/steamcmd.sh".format(STEAM_DIR)
 STEAM_USER = input("Steam Username: ")
 STEAM_PASS = getpass.getpass(prompt="Steam Password ")
 
-A3_WORKSHOP_DIR = "{}/steamapps/workshop/content/{}".format(A3_SERVER_DIR, A3_WORKSHOP_ID)
-A3_MODS_DIR = "{}/serverfiles/mods".format(A3_SERVER_DIR)
+A3_WORKSHOP_DIR = "{}/steamapps/workshop/content/{}".format(STEAM_DIR, A3_WORKSHOP_ID)
+A3_MODS_DIR = "{}/mods".format(A3_SERVER_DIR)
 
 print("")
 print("Select Modlist Files Found")
 f = []
-for (dirpath, dirnames, filenames) in os.walk("{}/modlists".format(A3_SERVER_DIR)):
+for (dirpath, dirnames, filenames) in os.walk("{}/modlists".format(A3_SERVER_USERDIR)):
     f.extend(filenames)
     break
 i = 1
@@ -38,7 +40,7 @@ for file in f:
 print("")
 
 selected_file = int(input("Enter Number: ")) - 1
-MOD_FILE = "{}/modlists/{}".format(A3_SERVER_DIR, f[selected_file])
+MOD_FILE = "{}/modlists/{}".format(A3_SERVER_USERDIR, f[selected_file])
 
 if re.search("\.html$", MOD_FILE) == False:
     MOD_FILE = "{}.html".format(MOD_FILE)
@@ -80,9 +82,9 @@ def call_steamcmd(params):
 
 
 def update_server():
-    os.system("cd {} && ./arma3server stop".format(A3_SERVER_DIR))
-    os.system("cd {} && ./arma3server update-lgsm".format(A3_SERVER_DIR))
-    os.system("cd {} && ./arma3server update".format(A3_SERVER_DIR))
+    os.system("cd {} && ./arma3server stop".format(A3_SERVER_USERDIR))
+    os.system("cd {} && ./arma3server update-lgsm".format(A3_SERVER_USERDIR))
+    os.system("cd {} && ./arma3server update".format(A3_SERVER_USERDIR))
 
 def start_server():
     config_mods = "";
@@ -97,12 +99,11 @@ def start_server():
         if re.search('mods\=\".*\"', line):
             newline = line.replace('.*', config_mods)
             replaced = True
-
     if replaced == False:
         f.write(config_mods)
     #todo set mods in lgsm config
     f.close()
-    os.system("cd {} && ./arma3server start".format(A3_SERVER_DIR))
+    os.system("cd {} && ./arma3server start".format(A3_SERVER_USERDIR))
 
 
 def mod_needs_update(mod_id, path):
