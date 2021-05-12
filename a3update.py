@@ -11,23 +11,28 @@ from bs4 import BeautifulSoup
 from datetime import datetime
 from urllib import request
 
-#region Configuration
+# region Configuration
+# A3_SERVER_FOLDER = "serverfiles"
 A3_SERVER_FOLDER = "serverfiles"
 A3_SERVER_ID = "233780"
-A3_SERVER_USERDIR = "/home/arma3lgsminstance"
+# A3_SERVER_USERDIR = "/home/arma3lgsminstance"
+A3_SERVER_USERDIR = "F:\\home\\arma3server"
 A3_SERVER_DIR = "{}/{}".format(A3_SERVER_USERDIR, A3_SERVER_FOLDER)
 A3_WORKSHOP_ID = "107410"
 
-STEAM_DIR = "{}/.local/share/Steam".format(A3_SERVER_USERDIR)
+# STEAM_DIR = "{}/.local/share/Steam".format(A3_SERVER_USERDIR)
+STEAM_DIR = "{}".format(A3_SERVER_USERDIR)
 STEAM_CMD = "{}/steamcmd/steamcmd.sh".format(STEAM_DIR)
+
+# A3_WORKSHOP_DIR = "{}/steamapps/workshop/content/{}".format(STEAM_DIR, A3_WORKSHOP_ID)
+A3_WORKSHOP_DIR = "{}/{}".format(STEAM_DIR, A3_WORKSHOP_ID)
+A3_MODS_DIR = "{}/mods".format(A3_SERVER_DIR)
+# endregion
+
+print("A3_SERVER_DIR{} A3_WORKSHOP_DIR{} A3_MODS_DIR{}".format(A3_SERVER_DIR, A3_WORKSHOP_DIR, A3_MODS_DIR))
+
 STEAM_USER = input("Steam Username: ")
 STEAM_PASS = getpass.getpass(prompt="Steam Password ")
-
-A3_WORKSHOP_DIR = "{}/steamapps/workshop/content/{}".format(STEAM_DIR, A3_WORKSHOP_ID)
-A3_MODS_DIR = "{}/mods".format(A3_SERVER_DIR)
-#endregion
-
-print("")
 print("Select Modlist Files Found")
 f = []
 for (dirpath, dirnames, filenames) in os.walk("{}/modlists".format(A3_SERVER_USERDIR)):
@@ -46,17 +51,16 @@ MOD_FILE = "{}/modlists/{}".format(A3_SERVER_USERDIR, f[selected_file])
 if re.search("\.html$", MOD_FILE) == False:
     MOD_FILE = "{}.html".format(MOD_FILE)
 
-
 if os.path.exists(MOD_FILE) == False:
-    print ("Missing Mod File {}".format(MOD_FILE))
+    print("Missing Mod File {}".format(MOD_FILE))
     sys.exit
 
 soup = BeautifulSoup(open(MOD_FILE, "r").read(), features="lxml")
 
 MODS = {}
-for item in soup.findAll("tr", {"data-type" : "ModContainer"}):
-    name_link   = item.find("a", {"data-type" : "Link"})
-    name_object = item.find("td", {"data-type" : "DisplayName"})
+for item in soup.findAll("tr", {"data-type": "ModContainer"}):
+    name_link = item.find("a", {"data-type": "Link"})
+    name_object = item.find("td", {"data-type": "DisplayName"})
 
     workshopId = re.search("id=(\d+)", name_link["href"])
 
@@ -67,9 +71,11 @@ for item in soup.findAll("tr", {"data-type" : "ModContainer"}):
 
 PATTERN = re.compile(r"workshopAnnouncement.*?<p id=\"(\d+)\">", re.DOTALL)
 WORKSHOP_CHANGELOG_URL = "https://steamcommunity.com/sharedfiles/filedetails/changelog"
-#endregion
 
-#region Functions
+
+# endregion
+
+# region Functions
 def log(msg):
     print("")
     print("{{0:=<{}}}".format(len(msg)).format(""))
@@ -87,6 +93,7 @@ def update_server():
     os.system("cd {} && ./arma3server update-lgsm".format(A3_SERVER_USERDIR))
     os.system("cd {} && ./arma3server update".format(A3_SERVER_USERDIR))
 
+
 def start_server():
     config_mods = "";
     for mod_name, mod_id in MODS.items():
@@ -102,7 +109,7 @@ def start_server():
             replaced = True
     if replaced == False:
         f.write(config_mods)
-    #todo set mods in lgsm config
+    # todo set mods in lgsm config
     f.close()
     os.system("cd {} && ./arma3server start".format(A3_SERVER_USERDIR))
 
@@ -123,7 +130,7 @@ def mod_needs_update(mod_id, path):
 
 
 def update_mods():
-    steam_cmd_params  = " +login {} {}".format(STEAM_USER, STEAM_PASS)
+    steam_cmd_params = " +login {} {}".format(STEAM_USER, STEAM_PASS)
     steam_cmd_params += " +force_install_dir {}".format(STEAM_DIR)
     i = 0;
     for mod_name, mod_id in MODS.items():
@@ -149,22 +156,28 @@ def update_mods():
         )
         i = i + 1
     if i > 0:
-       steam_cmd_params += " +quit"
-       call_steamcmd(steam_cmd_params)
+        steam_cmd_params += " +quit"
+        call_steamcmd(steam_cmd_params)
     else:
-       print("All Mods are up to date!")
+        print("All Mods are up to date!")
     return True;
 
+
 def lowercase_workshop_dir():
-    def rename_all( root, items):
+    def rename_all(root, items):
         for name in items:
             try:
-                os.rename(os.path.join(root, name),
-                os.path.join(root, name.lower()))
+                os.rename(
+                    os.path.join(root, name),
+                    os.path.join(root, name.lower())
+                )
+                if os.path.isdir(os.path.join(root, name)):
+                    print(os.path.join(root, name))
             except OSError:
-                pass # can't rename it, so what
+                pass  # can't rename it, so what
 
     # starts from the bottom so paths further up remain valid after renaming
+
     for root, dirs, files in os.walk(A3_WORKSHOP_DIR, topdown=False):
         rename_all(root, dirs)
         rename_all(root, files)
@@ -182,19 +195,43 @@ def create_mod_symlinks():
         else:
             print("Mod '{}' does not exist! ({})".format(mod_name, real_path))
 
-#endregion
+
+def rename_characters():
+    def rename_all(root, items):
+        for name in items:
+            try:
+                os.rename(
+                    os.path.join(root, name),
+                    os.path.join(root, name.lower())
+                )
+                if os.path.isdir(os.path.join(root, name)):
+                    print(os.path.join(root, name))
+
+            except OSError:
+                pass  # can't rename it, so what
+
+    # starts from the bottom so paths further up remain valid after renaming
+    print("toaster {}".format(A3_WORKSHOP_DIR))
+
+    for root, dirs, files in os.walk(A3_WORKSHOP_DIR, topdown=False):
+        print("root{} dirs{} files{}".format(root, dirs, files))
+        rename_all(root, dirs)
+        rename_all(root, files)
+
+
+# endregion
 
 log("Updating A3 server ({})".format(A3_SERVER_ID))
-update_server()
+# update_server()
 
 log("Updating mods")
-update_mods()
+# update_mods()
 
 log("Converting uppercase files/folders to lowercase...")
 lowercase_workshop_dir()
 
 log("Creating symlinks...")
-create_mod_symlinks()
+# create_mod_symlinks()
 
 log("Start A3 server")
-start_server()
+# start_server()
