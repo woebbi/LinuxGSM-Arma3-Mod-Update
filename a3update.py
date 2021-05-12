@@ -62,7 +62,7 @@ for item in soup.findAll("tr", {"data-type": "ModContainer"}):
 
     if id:
         mod_id = workshopId.group(1)
-        #mod_link = name_object.contents[0].lower().replace(" ", "_");
+        #mod_link = name_object.contents[0].lower().replace(" ", "_"); //old
         mod_link = re.sub("[^\d\w\s@_-]", "_", name_object.contents[0].lower())
         MODS["@{}".format(mod_link)] = mod_id
 
