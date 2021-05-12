@@ -12,20 +12,16 @@ from datetime import datetime
 from urllib import request
 
 # region Configuration
-# A3_SERVER_FOLDER = "serverfiles"
 A3_SERVER_FOLDER = "serverfiles"
 A3_SERVER_ID = "233780"
-# A3_SERVER_USERDIR = "/home/arma3lgsminstance"
-A3_SERVER_USERDIR = "F:\\home\\arma3server"
+A3_SERVER_USERDIR = "/home/arma3lgsminstance"
 A3_SERVER_DIR = "{}/{}".format(A3_SERVER_USERDIR, A3_SERVER_FOLDER)
 A3_WORKSHOP_ID = "107410"
 
-# STEAM_DIR = "{}/.local/share/Steam".format(A3_SERVER_USERDIR)
-STEAM_DIR = "{}".format(A3_SERVER_USERDIR)
+STEAM_DIR = "{}/.local/share/Steam".format(A3_SERVER_USERDIR)
 STEAM_CMD = "{}/steamcmd/steamcmd.sh".format(STEAM_DIR)
 
-# A3_WORKSHOP_DIR = "{}/steamapps/workshop/content/{}".format(STEAM_DIR, A3_WORKSHOP_ID)
-A3_WORKSHOP_DIR = "{}/{}".format(STEAM_DIR, A3_WORKSHOP_ID)
+A3_WORKSHOP_DIR = "{}/steamapps/workshop/content/{}".format(STEAM_DIR, A3_WORKSHOP_ID)
 A3_MODS_DIR = "{}/mods".format(A3_SERVER_DIR)
 # endregion
 
@@ -123,9 +119,7 @@ def mod_needs_update(mod_id, path):
         if match:
             updated_at = datetime.fromtimestamp(int(match.group(1)))
             created_at = datetime.fromtimestamp(os.path.getctime(path))
-
             return (updated_at >= created_at)
-
     return False
 
 
@@ -135,10 +129,8 @@ def update_mods():
     i = 0;
     for mod_name, mod_id in MODS.items():
         path = "{}/{}".format(A3_WORKSHOP_DIR, mod_id)
-
         # Check if mod needs to be updated
         if os.path.isdir(path):
-
             if mod_needs_update(mod_id, path):
                 # Delete existing folder so that we can verify whether the
                 # download succeeded
@@ -164,20 +156,14 @@ def update_mods():
 
 
 def lowercase_workshop_dir():
-    def rename_all(root, items):
+    def rename_all( root, items):
         for name in items:
             try:
-                os.rename(
-                    os.path.join(root, name),
-                    os.path.join(root, name.lower())
-                )
-                if os.path.isdir(os.path.join(root, name)):
-                    print(os.path.join(root, name))
+                os.rename(os.path.join(root, name),
+                os.path.join(root, name.lower()))
             except OSError:
-                pass  # can't rename it, so what
-
+                pass # can't rename it, so what
     # starts from the bottom so paths further up remain valid after renaming
-
     for root, dirs, files in os.walk(A3_WORKSHOP_DIR, topdown=False):
         rename_all(root, dirs)
         rename_all(root, files)
@@ -210,19 +196,16 @@ def rename_characters():
             except OSError:
                 print(OSError)
                 pass
-
     for root, dirs, files in os.walk(A3_MODS_DIR, topdown=True):
         rename_all(root, dirs)
         rename_all(root, files)
-
-
 # endregion
 
 log("Updating A3 server ({})".format(A3_SERVER_ID))
-# update_server()
+update_server()
 
 log("Updating mods")
-# update_mods()
+update_mods()
 
 log("Converting uppercase files/folders to lowercase...")
 lowercase_workshop_dir()
@@ -231,7 +214,7 @@ log("rename folders to replace special charaters with underscores...")
 rename_characters()
 
 log("Creating symlinks...")
-# create_mod_symlinks()
+create_mod_symlinks()
 
 log("Start A3 server")
-# start_server()
+start_server()
