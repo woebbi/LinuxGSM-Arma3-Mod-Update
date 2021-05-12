@@ -204,8 +204,8 @@ def rename_characters():
 
 # endregion
 
-log("Updating A3 server ({})".format(A3_SERVER_ID))
-update_server()
+#log("Updating A3 server ({})".format(A3_SERVER_ID))
+#update_server()
 
 log("Updating mods")
 update_mods()
