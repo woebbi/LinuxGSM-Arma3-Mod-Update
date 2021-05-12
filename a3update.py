@@ -14,8 +14,7 @@ from bs4 import BeautifulSoup
 # region Configuration
 A3_SERVER_FOLDER = "serverfiles"
 A3_SERVER_ID = "233780"
-#A3_SERVER_USERDIR = "/home/arma3-lgsm-instance"
-A3_SERVER_USERDIR = "f:\\home\\arma3server"
+A3_SERVER_USERDIR = "/home/arma3server"
 A3_SERVER_DIR = "{}/{}".format(A3_SERVER_USERDIR, A3_SERVER_FOLDER)
 A3_WORKSHOP_ID = "107410"
 
@@ -64,6 +63,7 @@ for item in soup.findAll("tr", {"data-type": "ModContainer"}):
         mod_id = workshopId.group(1)
         #mod_link = name_object.contents[0].lower().replace(" ", "_"); //old
         mod_link = re.sub("[^\d\w@_-]", "_", name_object.contents[0].lower())
+        print("{}:{}".format(mod_link,mod_id))
         MODS["@{}".format(mod_link)] = mod_id
 
 PATTERN = re.compile(r"workshopAnnouncement.*?<p id=\"(\d+)\">", re.DOTALL)
