@@ -29,7 +29,7 @@ A3_WORKSHOP_DIR = "{}/{}".format(STEAM_DIR, A3_WORKSHOP_ID)
 A3_MODS_DIR = "{}/mods".format(A3_SERVER_DIR)
 # endregion
 
-print("A3_SERVER_DIR{} A3_WORKSHOP_DIR{} A3_MODS_DIR{}".format(A3_SERVER_DIR, A3_WORKSHOP_DIR, A3_MODS_DIR))
+print("A3_SERVER_DIR\"{}\" A3_WORKSHOP_DIR\"{}\" A3_MODS_DIR\"{}\"".format(A3_SERVER_DIR, A3_WORKSHOP_DIR, A3_MODS_DIR))
 
 STEAM_USER = input("Steam Username: ")
 STEAM_PASS = getpass.getpass(prompt="Steam Password ")
@@ -200,21 +200,18 @@ def rename_characters():
     def rename_all(root, items):
         for name in items:
             try:
-                os.rename(
-                    os.path.join(root, name),
-                    os.path.join(root, name.lower())
-                )
                 if os.path.isdir(os.path.join(root, name)):
-                    print(os.path.join(root, name))
-
+                    newname = re.sub("[^\d\w@_-]", "_", name)
+                    if name != newname:
+                        os.rename(
+                            os.path.join(root, name),
+                            os.path.join(root, newname)
+                        )
             except OSError:
-                pass  # can't rename it, so what
+                print(OSError)
+                pass
 
-    # starts from the bottom so paths further up remain valid after renaming
-    print("toaster {}".format(A3_WORKSHOP_DIR))
-
-    for root, dirs, files in os.walk(A3_WORKSHOP_DIR, topdown=False):
-        print("root{} dirs{} files{}".format(root, dirs, files))
+    for root, dirs, files in os.walk(A3_MODS_DIR, topdown=True):
         rename_all(root, dirs)
         rename_all(root, files)
 
@@ -229,6 +226,9 @@ log("Updating mods")
 
 log("Converting uppercase files/folders to lowercase...")
 lowercase_workshop_dir()
+
+log("rename folders to replace special charaters with underscores...")
+rename_characters()
 
 log("Creating symlinks...")
 # create_mod_symlinks()
