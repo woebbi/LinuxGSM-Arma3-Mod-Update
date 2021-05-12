@@ -185,16 +185,16 @@ def create_mod_symlinks():
 #endregion
 
 log("Updating A3 server ({})".format(A3_SERVER_ID))
-#update_server()
+update_server()
 
 log("Updating mods")
-#update_mods()
+update_mods()
 
 log("Converting uppercase files/folders to lowercase...")
 lowercase_workshop_dir()
 
 log("Creating symlinks...")
-#create_mod_symlinks()
+create_mod_symlinks()
 
 log("Start A3 server")
-#start_server()
+start_server()
