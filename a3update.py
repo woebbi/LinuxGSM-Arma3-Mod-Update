@@ -1,15 +1,14 @@
 #!/usr/bin/python3
 
+import getpass
 import os
 import os.path
 import re
 import shutil
-import time
-import getpass
-from bs4 import BeautifulSoup
-
 from datetime import datetime
 from urllib import request
+
+from bs4 import BeautifulSoup
 
 # region Configuration
 A3_SERVER_FOLDER = "serverfiles"
@@ -25,7 +24,6 @@ A3_WORKSHOP_DIR = "{}/steamapps/workshop/content/{}".format(STEAM_DIR, A3_WORKSH
 A3_MODS_DIR = "{}/mods".format(A3_SERVER_DIR)
 # endregion
 
-print("A3_SERVER_DIR\"{}\" A3_WORKSHOP_DIR\"{}\" A3_MODS_DIR\"{}\"".format(A3_SERVER_DIR, A3_WORKSHOP_DIR, A3_MODS_DIR))
 
 STEAM_USER = input("Steam Username: ")
 STEAM_PASS = getpass.getpass(prompt="Steam Password ")
@@ -67,8 +65,6 @@ for item in soup.findAll("tr", {"data-type": "ModContainer"}):
 
 PATTERN = re.compile(r"workshopAnnouncement.*?<p id=\"(\d+)\">", re.DOTALL)
 WORKSHOP_CHANGELOG_URL = "https://steamcommunity.com/sharedfiles/filedetails/changelog"
-
-
 # endregion
 
 # region Functions
@@ -156,13 +152,14 @@ def update_mods():
 
 
 def lowercase_workshop_dir():
-    def rename_all( root, items):
+    def rename_all(root, items):
         for name in items:
             try:
                 os.rename(os.path.join(root, name),
-                os.path.join(root, name.lower()))
+                          os.path.join(root, name.lower()))
             except OSError:
-                pass # can't rename it, so what
+                pass  # can't rename it, so what
+
     # starts from the bottom so paths further up remain valid after renaming
     for root, dirs, files in os.walk(A3_WORKSHOP_DIR, topdown=False):
         rename_all(root, dirs)
@@ -196,9 +193,12 @@ def rename_characters():
             except OSError:
                 print(OSError)
                 pass
+
     for root, dirs, files in os.walk(A3_MODS_DIR, topdown=True):
         rename_all(root, dirs)
         rename_all(root, files)
+
+
 # endregion
 
 log("Updating A3 server ({})".format(A3_SERVER_ID))
