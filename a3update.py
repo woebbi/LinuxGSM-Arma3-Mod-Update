@@ -14,7 +14,7 @@ from urllib import request
 # region Configuration
 A3_SERVER_FOLDER = "serverfiles"
 A3_SERVER_ID = "233780"
-A3_SERVER_USERDIR = "/home/arma3lgsminstance"
+A3_SERVER_USERDIR = "/home/arma3-lgsm-instance"
 A3_SERVER_DIR = "{}/{}".format(A3_SERVER_USERDIR, A3_SERVER_FOLDER)
 A3_WORKSHOP_ID = "107410"
 
