@@ -10,11 +10,13 @@ Create an folder "modlists" in the server root folder (the folder where the arma
 ```bash
 $ cd /path/to/arma3server
 $ mkdir modlists
+$ rm a3update.py  ; wget https://raw.githubusercontent.com/woebbi/LinuxGSM-Arma3-Mod-Update/master/a3update.py ; chmod +x a3update.py    
 ```
 Copy the a3update.py in the root folder and edit the params:
 
 - A3_SERVER_DIR
 - A3_SERVER_FOLDER
+
 
 ## Use
 
